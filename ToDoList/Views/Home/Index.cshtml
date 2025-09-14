@@ -5,13 +5,39 @@
 
 <div class="text-center">
     <h1 class="display-4">To Do</h1>
-    <ul>
-        @foreach (var item in Model.Items)
-        {
-            <li>@item.Text</li>
-        }
-
-    </ul>
-
-    <a  class="btn btn-primary" href="/Home/Add">Add </a>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nội dung</th>
+                <th>Trạng thái</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.Text</td>
+                    <td>@(item.IsCompleted ? "Hoàn thành" : "Chưa hoàn thành")</td>
+                    <td>
+                        <form asp-action="ToggleStatus" asp-controller="Home" method="post" style="display: inline;">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <button type="submit" class="btn btn-sm @(item.IsCompleted ? "btn-warning" : "btn-success")">
+                                @(item.IsCompleted ? "Đặt lại" : "Hoàn thành")
+                            </button>
+                        </form>
+                        <form asp-action="Delete" asp-controller="Home" method="post" style="display: inline;">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Bạn có chắc muốn xóa mục này?');">
+                                Xóa
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <a class="btn btn-primary" href="/Home/Add">Add</a>
 </div>

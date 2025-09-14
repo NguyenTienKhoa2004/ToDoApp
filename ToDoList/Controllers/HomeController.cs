@@ -27,8 +27,7 @@ namespace ToDoList.Controllers
                     Id = ti.Id,
                     Text = ti.Text,
                     IsCompleted = ti.IsCompleted
-
-                })
+                 })
             });
         }
         [HttpGet]
@@ -41,10 +40,22 @@ namespace ToDoList.Controllers
         {
             _listManager.AddTodoItem(new ToDoItem()
             {
-                Id = item.Id,
+                //Id = item.Id,
                 Text = item.Text,
                 IsCompleted = false
             }); 
+            return RedirectToAction("Index");
+        }
+        [HttpPost]
+        public IActionResult ToggleStatus(int id)
+        {
+            _listManager.MarkComplete(id);
+            return RedirectToAction("Index");
+        }
+        [HttpPost]
+        public IActionResult Delete(int id)
+        {
+            _listManager.Delete(id);
             return RedirectToAction("Index");
         }
 
