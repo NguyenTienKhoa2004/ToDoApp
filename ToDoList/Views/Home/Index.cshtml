@@ -3,41 +3,77 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">To Do</h1>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nội dung</th>
-                <th>Trạng thái</th>
-                <th>Thao tác</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.Items)
-            {
-                <tr>
-                    <td>@item.Id</td>
-                    <td>@item.Text</td>
-                    <td>@(item.IsCompleted ? "Hoàn thành" : "Chưa hoàn thành")</td>
-                    <td>
-                        <form asp-action="ToggleStatus" asp-controller="Home" method="post" style="display: inline;">
-                            <input type="hidden" name="id" value="@item.Id" />
-                            <button type="submit" class="btn btn-sm @(item.IsCompleted ? "btn-warning" : "btn-success")">
-                                @(item.IsCompleted ? "Đặt lại" : "Hoàn thành")
-                            </button>
-                        </form>
-                        <form asp-action="Delete" asp-controller="Home" method="post" style="display: inline;">
-                            <input type="hidden" name="id" value="@item.Id" />
-                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Bạn có chắc muốn xóa mục này?');">
-                                Xóa
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-    <a class="btn btn-primary" href="/Home/Add">Add</a>
+@section Styles {
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="~/css/todo-styles.css" rel="stylesheet" />
+}
+
+<div class="todo-container">
+    <h1 class="page-title">
+        <i class="fas fa-tasks me-3"></i>
+        Quản lý công việc
+    </h1>
+
+    @if (Model.Items != null && Model.Items.Any())
+    {
+        <div class="table-responsive">
+            <table class="table task-table">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-hashtag me-2"></i>ID</th>
+                        <th><i class="fas fa-clipboard-list me-2"></i>Nội dung</th>
+                        <th><i class="fas fa-info-circle me-2"></i>Trạng thái</th>
+                        <th><i class="fas fa-cogs me-2"></i>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr class="task-row @(item.IsCompleted ? "task-row-completed" : "")">
+                            <td class="task-id">@item.Id</td>
+                            <td class="task-content">@item.Text</td>
+                            <td>
+                                <span class="status-badge @(item.IsCompleted ? "status-completed" : "status-pending")">
+                                    @(item.IsCompleted ? "Hoàn thành" : "Chưa hoàn thành")
+                                </span>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <form asp-action="ToggleStatus" asp-controller="Home" method="post" style="display: inline;">
+                                        <input type="hidden" name="id" value="@item.Id" />
+                                        <button type="submit" class="btn btn-custom @(item.IsCompleted ? "btn-reset" : "btn-toggle")">
+                                            <i class="fas fa-@(item.IsCompleted ? "undo" : "check") me-1"></i>
+                                            @(item.IsCompleted ? "Đặt lại" : "Hoàn thành")
+                                        </button>
+                                    </form>
+                                    <form asp-action="Delete" asp-controller="Home" method="post" style="display: inline;">
+                                        <input type="hidden" name="id" value="@item.Id" />
+                                        <button type="submit" class="btn btn-custom btn-delete" onclick="return confirm('Bạn có chắc muốn xóa mục này?');">
+                                            <i class="fas fa-trash me-1"></i>
+                                            Xóa
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="empty-state">
+            <i class="fas fa-clipboard-check"></i>
+            <h3>Chưa có công việc nào</h3>
+            <p>Hãy thêm công việc đầu tiên của bạn!</p>
+        </div>
+    }
+
+    <div class="add-section">
+        <a class="btn-add" asp-controller="Home" asp-action="Add">
+            <i class="fas fa-plus me-2"></i>
+            Thêm công việc mới
+        </a>
+    </div>
 </div>
