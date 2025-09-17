@@ -14,6 +14,30 @@
         Quản lý công việc
     </h1>
 
+    <!-- Fancy Add Form -->
+    <div class="add-form-container">
+        <h2 class="form-title">
+            <i class="fas fa-plus-circle me-2"></i>
+            Thêm công việc mới
+        </h2>
+        <form asp-action="Add" method="post">
+            <div class="fancy-input-group">
+                <i class="fas fa-edit input-icon"></i>
+                <input class="fancy-input" name="Text" value="" placeholder="Nhập nội dung công việc..." required />
+            </div>
+            <div class="form-buttons">
+                <button type="submit" class="btn-fancy btn-save">
+                    <i class="fas fa-save"></i>
+                    Lưu công việc
+                </button>
+                <a href="/" class="btn-fancy btn-cancel">
+                    <i class="fas fa-times"></i>
+                    Hủy bỏ
+                </a>
+            </div>
+        </form>
+    </div>
+
     @if (Model.Items != null && Model.Items.Any())
     {
         <div class="table-responsive">
@@ -66,14 +90,7 @@
         <div class="empty-state">
             <i class="fas fa-clipboard-check"></i>
             <h3>Chưa có công việc nào</h3>
-            <p>Hãy thêm công việc đầu tiên của bạn!</p>
+            <p>Hãy thêm công việc đầu tiên của bạn ở form bên trên!</p>
         </div>
     }
-
-    <div class="add-section">
-        <a class="btn-add" asp-controller="Home" asp-action="Add">
-            <i class="fas fa-plus me-2"></i>
-            Thêm công việc mới
-        </a>
-    </div>
 </div>

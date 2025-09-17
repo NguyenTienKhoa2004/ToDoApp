@@ -15,3 +15,6 @@ out/
 
 # Others
 *.vsidx
+
+appsettings.Development.json
+appsettings.Local.json

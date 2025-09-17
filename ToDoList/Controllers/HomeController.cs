@@ -30,11 +30,7 @@ namespace ToDoList.Controllers
                  })
             });
         }
-        [HttpGet]
-        public IActionResult Add()
-        {
-            return View("Add");
-        }
+        
         [HttpPost]
         public IActionResult Add(Item item)
         {

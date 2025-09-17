@@ -1,4 +1,6 @@
 using Infrastructure;
+using Microsoft.EntityFrameworkCore;
+using ToDoList.Data;
 using UseCases;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,7 +8,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddSingleton<IToDoItemRepository, InMemoryToDoItemRepository>();
+builder.Services.AddDbContext<ToDoDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<IToDoItemRepository, SqlToDoItemRepository>();
 builder.Services.AddTransient<ToDoListManager>();
 
 var app = builder.Build();
@@ -20,6 +25,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
