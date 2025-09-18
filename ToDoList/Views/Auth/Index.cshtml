@@ -1,0 +1,126 @@
+﻿@{
+    ViewData["Title"] = "Đăng nhập";
+}
+
+@section Styles {
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="~/css/auth-styles.css" rel="stylesheet" />
+}
+
+<div class="login-container">
+    <div class="login-header">
+        <h1 class="login-title">
+            <i class="fas fa-sign-in-alt me-3"></i>
+            Đăng nhập
+        </h1>
+        <p class="login-subtitle">Chào mừng trở lại! Vui lòng đăng nhập vào tài khoản của bạn.</p>
+    </div>
+
+    <form class="login-form" asp-action="Login" method="post">
+        <!-- Validation Summary -->
+        <div asp-validation-summary="All" class="validation-summary" style="display: none;"></div>
+
+        <!-- Username/Email Field -->
+        <div class="form-group">
+            <i class="fas fa-user input-icon"></i>
+            <input type="text"
+                   class="form-control-fancy"
+                   name="Username"
+                   placeholder=" "
+                   required
+                   autocomplete="username" />
+            <label class="form-label">Tên đăng nhập hoặc Email</label>
+        </div>
+
+        <!-- Password Field -->
+        <div class="form-group">
+            <i class="fas fa-lock input-icon"></i>
+            <input type="password"
+                   class="form-control-fancy"
+                   name="Password"
+                   placeholder=" "
+                   required
+                   autocomplete="current-password" />
+            <label class="form-label">Mật khẩu</label>
+        </div>
+
+        <!-- Remember Me & Forgot Password -->
+        <div class="remember-me-container">
+            <div class="remember-me">
+                <div class="custom-checkbox">
+                    <input type="checkbox" id="remember-me" name="RememberMe" value="true" />
+                    <span class="checkmark"></span>
+                </div>
+                <label for="remember-me">Ghi nhớ đăng nhập</label>
+            </div>
+            <a href="#" class="forgot-password">Quên mật khẩu?</a>
+        </div>
+
+        <!-- Login Button -->
+        <button type="submit" class="btn-login">
+            <i class="fas fa-sign-in-alt me-2"></i>
+            Đăng nhập
+        </button>
+    </form>
+
+    <!-- Social Login -->
+    <div class="login-footer">
+        <p style="color: #6c757d; margin-bottom: 15px;">Hoặc đăng nhập với</p>
+        <div class="social-login">
+            <a href="#" class="social-btn facebook">
+                <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="#" class="social-btn google">
+                <i class="fab fa-google"></i>
+            </a>
+            <a href="#" class="social-btn twitter">
+                <i class="fab fa-twitter"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Form Links -->
+    <div class="form-links">
+        <span style="color: #6c757d;">Chưa có tài khoản?</span>
+        <a href="#" class="form-link">
+            <i class="fas fa-user-plus me-1"></i>
+            Đăng ký ngay
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Form validation và loading animation
+        document.querySelector('.login-form').addEventListener('submit', function(e) {
+            const btn = document.querySelector('.btn-login');
+            btn.classList.add('loading');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Đang đăng nhập...';
+        });
+
+        // Floating label animation enhancement
+        document.querySelectorAll('.form-control-fancy').forEach(input => {
+            input.addEventListener('blur', function() {
+                if (this.value) {
+                    this.classList.add('has-value');
+                } else {
+                    this.classList.remove('has-value');
+                }
+            });
+        });
+
+        // Password visibility toggle (optional enhancement)
+        function togglePassword() {
+            const passwordField = document.querySelector('input[name="Password"]');
+            const icon = document.querySelector('.password-toggle-icon');
+
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                icon.className = 'fas fa-eye-slash password-toggle-icon';
+            } else {
+                passwordField.type = 'password';
+                icon.className = 'fas fa-eye password-toggle-icon';
+            }
+        }
+    </script>
+}
