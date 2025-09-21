@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using ToDoList.Models;
@@ -9,57 +10,72 @@ namespace ToDoList.Controllers
     {
         private readonly ToDoListManager _listManager;
         private readonly ILogger<HomeController> _logger;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public HomeController(ToDoListManager listManager, ILogger<HomeController> logger)
+        public HomeController(
+            ToDoListManager listManager,
+            ILogger<HomeController> logger,
+            UserManager<IdentityUser> userManager)
         {
             _listManager = listManager;
             _logger = logger;
+            _userManager = userManager;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var todoItems = _listManager.getTodoItems();
-            return View(new ToDoListViewModel()
+            var userId = _userManager.GetUserId(User);
+
+            var todoItems = await _listManager.GetTodoItemsAsync(userId);
+
+            return View(new ToDoListViewModel
             {
-                Items = todoItems.Select(ti => new
-            Item()
+                Items = todoItems.Select(ti => new Item
                 {
                     Id = ti.Id,
                     Text = ti.Text,
                     IsCompleted = ti.IsCompleted
-                 })
+                })
             });
         }
-        
+
         [HttpPost]
-        public IActionResult Add(Item item)
+        public async Task<IActionResult> Add(Item item)
         {
-            _listManager.AddTodoItem(new ToDoItem()
+            var userId = _userManager.GetUserId(User);
+
+            await _listManager.AddTodoItemAsync(new ToDoItem
             {
-                //Id = item.Id,
                 Text = item.Text,
                 IsCompleted = false
-            }); 
-            return RedirectToAction("Index");
-        }
-        [HttpPost]
-        public IActionResult ToggleStatus(int id)
-        {
-            _listManager.MarkComplete(id);
-            return RedirectToAction("Index");
-        }
-        [HttpPost]
-        public IActionResult Delete(int id)
-        {
-            _listManager.Delete(id);
+            }, userId);
+
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
+        public async Task<IActionResult> ToggleStatus(int id)
+        {
+            var userId = _userManager.GetUserId(User);
+            await _listManager.MarkCompleteAsync(id, userId);
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var userId = _userManager.GetUserId(User);
+            await _listManager.DeleteAsync(id, userId);
+            return RedirectToAction("Index");
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View(new ErrorViewModel
+            {
+                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+            });
         }
     }
 }

@@ -1,4 +1,7 @@
 ﻿using Entities;
+using Microsoft.AspNetCore.Http;    
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using ToDoList.Data;
@@ -15,36 +18,44 @@ namespace Infrastructure
             _context = context;
         }
 
-        public void Add(ToDoItem item)
+        public async Task AddAsync(ToDoItem item, string userId)
         {
-            _context.ToDoItems.Add(item);
-            _context.SaveChanges();
+            item.UserId = userId;
+            await _context.ToDoItems.AddAsync(item);
+            await _context.SaveChangesAsync();
         }
 
-        public void Delete(int id)
+        public async Task<IEnumerable<ToDoItem>> GetTodoItemsAsync(string userId)
         {
-            var item = _context.ToDoItems.Find(id);
-            if (item != null)
-            {
-                _context.ToDoItems.Remove(item);
-                _context.SaveChanges();
-            }
+            return await _context.ToDoItems
+                .Where(i => i.UserId == userId)
+                .AsNoTracking()
+                .ToListAsync();
         }
 
-        public ToDoItem? GetById(int id)
+        public async Task<ToDoItem?> GetByIdAsync(int id, string userId)
         {
-            return _context.ToDoItems.Find(id);
+            return await _context.ToDoItems
+                .FirstOrDefaultAsync(i => i.Id == id && i.UserId == userId);
         }
 
-        public IEnumerable<ToDoItem> getTodoItems()
+        public async Task UpdateAsync(ToDoItem item, string userId)
         {
-            return _context.ToDoItems.ToList();
+            var existing = await _context.ToDoItems.FirstOrDefaultAsync(i => i.Id == item.Id && i.UserId == userId);
+            if (existing == null) return;
+            existing.Text = item.Text;
+            existing.IsCompleted = item.IsCompleted;
+            existing.Priority = item.Priority;
+            await _context.SaveChangesAsync();
         }
 
-        public void Update(ToDoItem item)
+        public async Task DeleteAsync(int id, string userId)
         {
-            _context.ToDoItems.Update(item);
-            _context.SaveChanges();
+            var item = await _context.ToDoItems.FirstOrDefaultAsync(i => i.Id == id && i.UserId == userId);
+            if (item == null) return;
+            _context.ToDoItems.Remove(item);
+            await _context.SaveChangesAsync();
         }
     }
+
 }

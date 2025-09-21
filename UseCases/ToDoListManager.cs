@@ -1,37 +1,45 @@
 ﻿using Entities;
+
 namespace UseCases
 {
-    public class ToDoListManager(IToDoItemRepository repository)
+    // Lớp dịch vụ quản lý danh sách ToDo
+    public class ToDoListManager
     {
-        private readonly IToDoItemRepository repository = repository;
+        private readonly IToDoItemRepository _repository;
 
-        public IEnumerable<ToDoItem> getTodoItems()
+        // Constructor chuẩn để DI
+        public ToDoListManager(IToDoItemRepository repository)
         {
-            return repository.getTodoItems();
-
+            _repository = repository;
         }
 
-        public void AddTodoItem(ToDoItem item)
+        // Lấy toàn bộ todo items của một user
+        public async Task<IEnumerable<ToDoItem>> GetTodoItemsAsync(string userId)
         {
-            repository.Add(item);
+            return await _repository.GetTodoItemsAsync(userId);
         }
 
-        public void MarkComplete(int id)
+        // Thêm mới một item cho user
+        public async Task AddTodoItemAsync(ToDoItem item, string userId)
         {
-            var item = repository.GetById(id);
+            await _repository.AddAsync(item, userId);
+        }
+
+        // Đánh dấu hoàn thành
+        public async Task MarkCompleteAsync(int id, string userId)
+        {
+            var item = await _repository.GetByIdAsync(id, userId);
             if (item != null)
             {
                 item.IsCompleted = true;
-                repository.Update(item);
-
+                await _repository.UpdateAsync(item, userId);
             }
-            
         }
-        public void Delete(int id)
+
+        // Xóa item
+        public async Task DeleteAsync(int id, string userId)
         {
-            repository.Delete(id);
-            
-            
+            await _repository.DeleteAsync(id, userId);
         }
     }
 }

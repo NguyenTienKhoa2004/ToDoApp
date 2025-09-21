@@ -15,5 +15,7 @@
 
         public PriorityLevel Priority { get; set; }
 
+        public string UserId { get; set; }
+
     }
 }
