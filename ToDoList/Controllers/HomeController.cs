@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -21,7 +22,7 @@ namespace ToDoList.Controllers
             _logger = logger;
             _userManager = userManager;
         }
-
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             var userId = _userManager.GetUserId(User);
@@ -38,7 +39,7 @@ namespace ToDoList.Controllers
                 })
             });
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Add(Item item)
         {
@@ -52,7 +53,7 @@ namespace ToDoList.Controllers
 
             return RedirectToAction("Index");
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> ToggleStatus(int id)
         {
@@ -60,7 +61,7 @@ namespace ToDoList.Controllers
             await _listManager.MarkCompleteAsync(id, userId);
             return RedirectToAction("Index");
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
